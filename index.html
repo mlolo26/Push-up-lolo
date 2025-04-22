@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Push-Up Challenge</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f2f2f2; margin: 0; padding: 20px; }
+    h1 { color: #333; }
+    .counter { font-size: 48px; margin: 20px 0; }
+    button { font-size: 18px; padding: 10px 20px; margin: 10px; border: none; border-radius: 8px; cursor: pointer; }
+    .validate { background-color: #4CAF50; color: white; }
+    .fail { background-color: #f44336; color: white; }
+    .test { background-color: #2196F3; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Push-Up Challenge</h1>
+  <div id="series">Séries : 5 / 5 / 5</div>
+  <div class="counter" id="dayCounter">Jour 1</div>
+  <button class="validate" onclick="validate()">J'ai réussi</button>
+  <button class="fail" onclick="fail()">Échec</button>
+  <button class="test" onclick="testMax()">Test Max</button>
+
+<script>
+let day = 1;
+let basePushUps = 5;
+
+function updateDisplay() {
+  document.getElementById('series').innerText = `Séries : ${basePushUps} / ${basePushUps} / ${basePushUps}`;
+  document.getElementById('dayCounter').innerText = `Jour ${day}`;
+}
+
+function validate() {
+  basePushUps += 2;
+  day++;
+  updateDisplay();
+  saveProgress();
+}
+
+function fail() {
+  basePushUps += 1;
+  day++;
+  updateDisplay();
+  saveProgress();
+}
+
+function testMax() {
+  let max = prompt('Combien de pompes maximum as-tu réussi ?');
+  alert(`Bravo pour ${max} pompes ! Continue !`);
+}
+
+function saveProgress() {
+  localStorage.setItem('day', day);
+  localStorage.setItem('basePushUps', basePushUps);
+}
+
+function loadProgress() {
+  if (localStorage.getItem('day')) {
+    day = parseInt(localStorage.getItem('day'));
+    basePushUps = parseInt(localStorage.getItem('basePushUps'));
+    updateDisplay();
+  }
+}
+
+loadProgress();
+</script>
+
+</body>
+</html>
