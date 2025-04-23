@@ -4,28 +4,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Push-Up Challenge</title>
+  <title>Push-Up Challenge Fun</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; background: #f2f2f2; margin: 0; padding: 20px; }
-    h1 { color: #333; }
-    .counter { font-size: 48px; margin: 20px 0; }
-    button { font-size: 18px; padding: 10px 20px; margin: 10px; border: none; border-radius: 8px; cursor: pointer; }
-    .validate { background-color: #4CAF50; color: white; }
-    .fail { background-color: #f44336; color: white; }
-    .test { background-color: #2196F3; color: white; }
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      text-align: center; 
+      background: #121212; 
+      color: white; 
+      margin: 0; 
+      padding: 20px;
+    }
+    h1 { color: #00e676; margin-bottom: 30px; font-size: 36px; }
+    .series, .counter { 
+      font-size: 36px; 
+      margin: 20px 0; 
+      font-weight: bold; 
+    }
+    button { 
+      font-size: 18px; 
+      padding: 12px 24px; 
+      margin: 10px; 
+      border: none; 
+      border-radius: 12px; 
+      cursor: pointer; 
+      transition: transform 0.2s, background-color 0.3s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    .validate { background-color: #00c853; color: white; }
+    .fail { background-color: #d50000; color: white; }
+    .test { background-color: #2962ff; color: white; }
+    .history { background-color: #ff9100; color: white; }
+    #historyList { margin-top: 20px; text-align: left; display: none; }
+    #encouragement { margin-top: 20px; font-size: 24px; color: #81c784; min-height: 30px; }
   </style>
 </head>
 <body>
   <h1>Push-Up Challenge</h1>
-  <div id="series">Séries : 5 / 5 / 5</div>
+  <div class="series" id="series">Séries : 5 / 5 / 5</div>
   <div class="counter" id="dayCounter">Jour 1</div>
   <button class="validate" onclick="validate()">J'ai réussi</button>
   <button class="fail" onclick="fail()">Échec</button>
   <button class="test" onclick="testMax()">Test Max</button>
+  <button class="history" onclick="toggleHistory()">Voir Historique</button>
+
+  <div id="encouragement"></div>
+  <div id="historyList"></div>
 
 <script>
 let day = 1;
 let basePushUps = 5;
+let history = [];
+const encouragements = [
+  "Super boulot !",
+  "Tu deviens plus fort chaque jour !",
+  "Continue comme ça !",
+  "Tu vas atteindre ton objectif !",
+  "La persévérance paie toujours !",
+  "Tu es un champion !",
+  "Rien ne peut t'arrêter !"
+];
 
 function updateDisplay() {
   document.getElementById('series').innerText = `Séries : ${basePushUps} / ${basePushUps} / ${basePushUps}`;
@@ -33,35 +74,66 @@ function updateDisplay() {
 }
 
 function validate() {
-  basePushUps += 2;
-  day++;
-  updateDisplay();
-  saveProgress();
-}
-
-function fail() {
+  saveHistory();
   basePushUps += 1;
   day++;
   updateDisplay();
   saveProgress();
+  showEncouragement();
+}
+
+function fail() {
+  day++;
+  updateDisplay();
+  saveProgress();
+  document.getElementById('encouragement').innerText = "";
 }
 
 function testMax() {
   let max = prompt('Combien de pompes maximum as-tu réussi ?');
-  alert(`Bravo pour ${max} pompes ! Continue !`);
+  if (max) {
+    alert(`Bravo pour ${max} pompes ! Continue !`);
+  }
 }
 
 function saveProgress() {
   localStorage.setItem('day', day);
   localStorage.setItem('basePushUps', basePushUps);
+  localStorage.setItem('history', JSON.stringify(history));
 }
 
 function loadProgress() {
   if (localStorage.getItem('day')) {
     day = parseInt(localStorage.getItem('day'));
     basePushUps = parseInt(localStorage.getItem('basePushUps'));
+    history = JSON.parse(localStorage.getItem('history')) || [];
     updateDisplay();
   }
+}
+
+function saveHistory() {
+  const today = new Date().toLocaleDateString('fr-FR');
+  history.push(`${today} : ${basePushUps}/${basePushUps}/${basePushUps}`);
+}
+
+function toggleHistory() {
+  const historyDiv = document.getElementById('historyList');
+  if (historyDiv.style.display === 'none') {
+    let content = '<h2>Historique :</h2><ul>';
+    history.forEach(item => {
+      content += `<li>${item}</li>`;
+    });
+    content += '</ul>';
+    historyDiv.innerHTML = content;
+    historyDiv.style.display = 'block';
+  } else {
+    historyDiv.style.display = 'none';
+  }
+}
+
+function showEncouragement() {
+  const randomIndex = Math.floor(Math.random() * encouragements.length);
+  document.getElementById('encouragement').innerText = encouragements[randomIndex];
 }
 
 loadProgress();
